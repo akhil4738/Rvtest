@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Certificate Generator</title>
+
+<style>
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Times New Roman", serif;
+    background: #f2f2f2;
+}
+
+/* ---------------- FORM ---------------- */
+.form-box {
+    max-width: 900px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.form-row input {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 22px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---------------- CERTIFICATE ---------------- */
+#certificate {
+    width: 297mm;
+    height: 210mm;                  /* EXACT A4 LANDSCAPE */
+    margin: 0 auto;
+    background: #ffffff;
+    border: 8px solid #002147;
+    padding: 20mm;
+    display: none;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    overflow: hidden;               /* 🔥 PREVENT 2nd PAGE */
+    page-break-inside: avoid;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.header img {
+    position: absolute;
+    left: 0;
+    height: 80px;
+}
+
+.academy {
+    text-align: center;
+}
+
+.academy h1 {
+    margin: 0;
+    font-size: 30pt;
+    color: #002147;
+}
+
+.academy p {
+    margin: 4px 0 0;
+    font-size: 14pt;
+}
+
+/* ID */
+.cert-id {
+    text-align: right;
+    font-size: 12pt;
+    margin-top: 4px;
+}
+
+/* Divider */
+.divider {
+    border-bottom: 3px solid #002147;
+    margin: 12px 0;
+}
+
+/* Title */
+.title {
+    text-align: center;
+    font-size: 26pt;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Content */
+.content {
+    text-align: center;
+    font-size: 15.5pt;
+    line-height: 1.7;
+}
+
+.blank {
+    display: inline-block;
+    min-width: 340px;
+    border-bottom: 1px solid #000;
+    font-size: 19pt;
+    font-weight: bold;
+}
+
+/* Signatures */
+.signatures {
+    display: flex;
+    justify-content: space-between;
+    max-width: 620px;
+    margin: 16px auto 6px;
+}
+
+.signature {
+    text-align: center;
+    font-size: 14pt;
+}
+
+.signature-line {
+    border-top: 1px solid #000;
+    width: 210px;
+    margin-bottom: 4px;
+}
+
+/* Grade */
+.grade {
+    text-align: center;
+    font-size: 14pt;
+}
+
+.grade-box {
+    display: inline-block;
+    width: 140px;
+    height: 32px;
+    border: 2px solid #002147;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.grade-scale {
+    font-size: 13pt;
+    margin-top: 4px;
+}
+
+/* Address */
+.address {
+    text-align: center;
+    font-size: 11.5pt;
+    margin-top: 4px;
+}
+
+/* ---------------- PRINT ---------------- */
+@media print {
+    body {
+        background: none;
+    }
+
+    .form-box {
+        display: none;
+    }
+
+    #certificate {
+        display: flex;
+        width: 297mm;
+        height: 210mm;
+        margin: 0;
+        page-break-after: avoid;
+        page-break-before: avoid;
+        page-break-inside: avoid;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- FORM -->
+<div class="form-box">
+    <h2>Certificate Generator</h2>
+
+    <div class="form-row">
+        <input type="text" id="studentName" placeholder="Student Name *">
+        <input type="text" id="courseName" placeholder="Course Name *">
+    </div>
+
+    <div class="form-row">
+        <input type="text" id="certificateId" placeholder="Certificate ID *">
+        <input type="text" id="grade" placeholder="Grade (optional)">
+    </div>
+
+    <button id="printBtn" disabled>Print Certificate</button>
+</div>
+
+<!-- CERTIFICATE -->
+<div id="certificate">
+
+    <!-- Top -->
+    <div>
+        <div class="header">
+            <div class="academy">
+                <h1>RV Technical Academy</h1>
+                <p>TARNAKA</p>
+            </div>
+        </div>
+
+        <div class="cert-id">
+            Certificate ID: <span id="cid"></span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="title">Certificate of Completion</div>
+    </div>
+
+    <!-- Middle -->
+    <div class="content">
+        This is to certify that<br><br>
+
+        <span class="blank" id="sname"></span><br>
+        
+
+        has successfully completed the course<br><br>
+
+        <span class="blank" id="cname"></span><br>
+       
+        with satisfactory performance and dedication.
+    </div>
+
+    <!-- Bottom -->
+    <div>
+        <div class="signatures">
+            <div class="signature">
+                <div class="signature-line"></div>
+                Course Instructor
+            </div>
+
+            <div class="signature">
+                <div class="signature-line"></div>
+                <strong>G Ravi M.E. (IISc)</strong><br>
+                Director
+            </div>
+        </div>
+
+        <div class="grade">
+            <strong>Grade Awarded:</strong>
+            <div class="grade-box" id="gbox"></div>
+
+            <div class="grade-scale">
+                A – 90–100% | B – 80–89% | C – 70–79% |
+                D – 60–69% | F – Below 60%
+            </div>
+        </div>
+
+        <div class="address">
+            12-13-1260, Street Number 7, Tarnaka, Secunderabad, 500017
+        </div>
+    </div>
+
+</div>
+
+<script>
+const s = document.getElementById("studentName");
+const c = document.getElementById("courseName");
+const id = document.getElementById("certificateId");
+const g = document.getElementById("grade");
+const btn = document.getElementById("printBtn");
+
+function validate() {
+    btn.disabled = !(s.value && c.value && id.value);
+}
+
+document.querySelectorAll("input").forEach(i =>
+    i.addEventListener("input", validate)
+);
+
+btn.onclick = () => {
+    document.getElementById("sname").textContent = s.value;
+    document.getElementById("cname").textContent = c.value;
+    document.getElementById("cid").textContent = id.value;
+    document.getElementById("gbox").textContent = g.value;
+    window.print();
+};
+</script>
+
+</body>
+</html>
